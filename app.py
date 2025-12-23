@@ -8,56 +8,57 @@ ADMIN_TMPL = """
 <!doctype html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 min-h-screen">
-<div class="max-w-3xl mx-auto py-10">
-  <h1 class="text-2xl font-bold mb-4">관리자 모드</h1>
+<div class="max-w-3xl mx-auto px-4 py-4 sm:py-6 md:py-10">
+  <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">관리자 모드</h1>
   <form class="space-y-3" method="post">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-white p-4 rounded shadow" autocomplete="off">
-      <select name="stage" required class="border p-2 rounded w-full">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-white p-4 sm:p-6 rounded shadow" autocomplete="off">
+      <select name="stage" required class="border p-3 sm:p-2 text-base rounded w-full">
         <option value="">단계 선택 (1~6)</option>
         {% for s in range(1,7) %}
         <option value="{{s}}">단계 {{s}}</option>
         {% endfor %}
       </select>
-      <input name="question" required placeholder="문제" class="border p-2 rounded w-full" autocomplete="off">
-      <input name="answer" required placeholder="정답" class="border p-2 rounded w-full" autocomplete="off">
-      <button class="md:col-span-3 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">저장하기</button>
+      <input name="question" required placeholder="문제" class="border p-3 sm:p-2 text-base rounded w-full" autocomplete="off">
+      <input name="answer" required placeholder="정답" class="border p-3 sm:p-2 text-base rounded w-full" autocomplete="off">
+      <button class="md:col-span-3 bg-blue-600 text-white py-3 sm:py-2 text-base rounded hover:bg-blue-700 active:bg-blue-800">저장하기</button>
     </div>
   </form>
 
-  <div class="mb-4 flex gap-2">
+  <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-2">
     <form method="post" action="{{ url_for('admin_load_sample') }}" style="display: inline;" onsubmit="return confirm('샘플 데이터를 불러오시겠습니까? 기존 데이터는 유지됩니다.');">
-      <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">샘플 불러오기</button>
+      <button type="submit" class="bg-purple-600 text-white px-4 py-3 sm:py-2 text-base rounded hover:bg-purple-700 active:bg-purple-800 w-full sm:w-auto">샘플 불러오기</button>
     </form>
   </div>
 
-  <h2 class="text-xl font-semibold mt-8 mb-3">저장된 문제</h2>
+  <h2 class="text-lg sm:text-xl font-semibold mt-6 sm:mt-8 mb-3">저장된 문제</h2>
   {% if rows %}
-  <div class="mb-3 flex gap-2">
-    <button onclick="saveAll()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">모두 저장</button>
+  <div class="mb-3 flex flex-col sm:flex-row gap-2">
+    <button onclick="saveAll()" class="bg-green-600 text-white px-4 py-3 sm:py-2 text-base rounded hover:bg-green-700 active:bg-green-800 w-full sm:w-auto">모두 저장</button>
     <form method="post" action="{{ url_for('admin_delete_all') }}" style="display: inline;" onsubmit="return confirm('모든 문제를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">
-      <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">모두 삭제</button>
+      <button type="submit" class="bg-red-600 text-white px-4 py-3 sm:py-2 text-base rounded hover:bg-red-700 active:bg-red-800 w-full sm:w-auto">모두 삭제</button>
     </form>
   </div>
   {% endif %}
   <div class="bg-white rounded shadow divide-y">
     {% for row in rows %}
-      <form class="problem-form p-3 flex flex-col gap-2 md:flex-row md:items-center md:gap-3" method="post" action="{{ url_for('admin_update', pid=row['id']) }}">
+      <form class="problem-form p-3 sm:p-4 flex flex-col gap-3 md:flex-row md:items-center md:gap-3" method="post" action="{{ url_for('admin_update', pid=row['id']) }}">
         <input type="hidden" name="_method" value="update">
         <input type="hidden" name="problem_id" value="{{row['id']}}">
-        <input name="stage" type="number" min="1" max="6" required value="{{row['stage']}}" class="border p-2 rounded w-full md:w-24" />
-        <input name="question" required value="{{row['question']}}" class="border p-2 rounded w-full md:flex-1" />
-        <input name="answer" required value="{{row['answer']}}" class="border p-2 rounded w-full md:w-48" />
+        <input name="stage" type="number" min="1" max="6" required value="{{row['stage']}}" class="border p-3 sm:p-2 text-base rounded w-full md:w-24" />
+        <input name="question" required value="{{row['question']}}" class="border p-3 sm:p-2 text-base rounded w-full md:flex-1" />
+        <input name="answer" required value="{{row['answer']}}" class="border p-3 sm:p-2 text-base rounded w-full md:w-48" />
         <div class="flex gap-2">
-          <button type="button" onclick="this.closest('form').submit()" class="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700">저장</button>
-          <button formaction="{{ url_for('admin_delete', pid=row['id']) }}" formmethod="post" class="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700" onclick="return confirm('삭제하시겠습니까?');">삭제</button>
+          <button type="button" onclick="this.closest('form').submit()" class="bg-green-600 text-white px-4 py-3 sm:px-3 sm:py-2 text-base rounded hover:bg-green-700 active:bg-green-800 flex-1 sm:flex-none">저장</button>
+          <button formaction="{{ url_for('admin_delete', pid=row['id']) }}" formmethod="post" class="bg-red-600 text-white px-4 py-3 sm:px-3 sm:py-2 text-base rounded hover:bg-red-700 active:bg-red-800 flex-1 sm:flex-none" onclick="return confirm('삭제하시겠습니까?');">삭제</button>
         </div>
       </form>
     {% endfor %}
     {% if not rows %}
-      <div class="p-3 text-gray-500">아직 문제 없음</div>
+      <div class="p-4 text-gray-500 text-center">아직 문제 없음</div>
     {% endif %}
   </div>
   <script>
@@ -108,8 +109,8 @@ ADMIN_TMPL = """
     }
   </script>
 
-  <div class="mt-6">
-    <a href="{{ url_for('quiz_select') }}" class="text-blue-700 underline">문제 출제 모드로 가기</a>
+  <div class="mt-6 text-center sm:text-left">
+    <a href="{{ url_for('quiz_select') }}" class="text-blue-700 underline text-base">문제 출제 모드로 가기</a>
   </div>
 </div>
 </body>
@@ -119,22 +120,25 @@ ADMIN_TMPL = """
 SELECT_TMPL = """
 <!doctype html>
 <html>
-<head><script src="https://cdn.tailwindcss.com"></script></head>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 <body class="bg-slate-100 min-h-screen">
-<div class="max-w-xl mx-auto py-10">
-  <h1 class="text-2xl font-bold mb-4">문제 출제 모드</h1>
-  <form method="post" class="bg-white p-4 rounded shadow space-y-3">
-    <label class="block text-sm text-gray-600">단계를 선택하세요</label>
-    <select name="stage" class="border p-2 rounded w-full" required>
+<div class="max-w-xl mx-auto px-4 py-6 sm:py-10">
+  <h1 class="text-xl sm:text-2xl font-bold mb-6 sm:mb-4">문제 출제 모드</h1>
+  <form method="post" class="bg-white p-5 sm:p-4 rounded shadow space-y-4">
+    <label class="block text-base sm:text-sm text-gray-600 font-medium">단계를 선택하세요</label>
+    <select name="stage" class="border p-3 sm:p-2 text-base rounded w-full" required>
       <option value="">-- 단계 선택 --</option>
       {% for s in stages %}
         <option value="{{s}}">단계 {{s}}</option>
       {% endfor %}
     </select>
-    <button class="bg-blue-600 text-white py-2 rounded w-full hover:bg-blue-700">시작</button>
+    <button class="bg-blue-600 text-white py-3 sm:py-2 text-base rounded w-full hover:bg-blue-700 active:bg-blue-800">시작</button>
   </form>
-  <div class="mt-4">
-    <a href="{{ url_for('admin') }}" class="text-blue-700 underline text-sm">관리자 모드</a>
+  <div class="mt-6 sm:mt-4 text-center sm:text-left">
+    <a href="{{ url_for('admin') }}" class="text-blue-700 underline text-base sm:text-sm">관리자 모드</a>
   </div>
 </div>
 </body>
@@ -144,29 +148,32 @@ SELECT_TMPL = """
 QUIZ_TMPL = """
 <!doctype html>
 <html>
-<head><script src="https://cdn.tailwindcss.com"></script></head>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 <body class="bg-slate-100 min-h-screen">
-<div class="max-w-xl mx-auto py-10">
-  <h1 class="text-2xl font-bold mb-4">단계 {{stage}} 문제</h1>
+<div class="max-w-xl mx-auto px-4 py-6 sm:py-10">
+  <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">단계 {{stage}} 문제</h1>
   {% if not question %}
-    <div class="bg-white p-4 rounded shadow">해당 단계에 문제가 없습니다.</div>
+    <div class="bg-white p-5 sm:p-4 rounded shadow text-base">해당 단계에 문제가 없습니다.</div>
   {% else %}
-    <form method="post" class="bg-white p-4 rounded shadow space-y-3" autocomplete="off">
-      <div class="text-lg font-semibold">{{question['question']}}</div>
+    <form method="post" class="bg-white p-5 sm:p-4 rounded shadow space-y-4" autocomplete="off">
+      <div class="text-lg sm:text-xl font-semibold leading-relaxed">{{question['question']}}</div>
       <input type="hidden" name="qid" value="{{question['id']}}">
-      <input name="user_answer" required placeholder="정답 입력" class="border p-2 rounded w-full" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="">
-      <button class="bg-green-600 text-white py-2 rounded w-full hover:bg-green-700">제출</button>
+      <input name="user_answer" required placeholder="정답 입력" class="border p-3 sm:p-2 text-base rounded w-full" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="">
+      <button class="bg-green-600 text-white py-3 sm:py-2 text-base rounded w-full hover:bg-green-700 active:bg-green-800">제출</button>
       {% if result is not none %}
-        <div class="p-3 rounded {{ 'bg-green-100 text-green-800' if result else 'bg-red-100 text-red-800' }}">
+        <div class="p-4 sm:p-3 rounded text-base {{ 'bg-green-100 text-green-800' if result else 'bg-red-100 text-red-800' }}">
           {{ 'O 정답! 다음 단계로 진행하세요.' if result else 'X 오답! 다시 시도해보세요.' }}
         </div>
         {% if result %}
-          <div class="text-sm text-gray-700">현재 단계 완료! 다음 단계로 진행하세요.</div>
+          <div class="text-base sm:text-sm text-gray-700">현재 단계 완료! 다음 단계로 진행하세요.</div>
         {% else %}
-          <div id="correct-ans" class="p-3 mt-2 rounded bg-yellow-100 text-yellow-900">
+          <div id="correct-ans" class="p-4 sm:p-3 mt-2 rounded bg-yellow-100 text-yellow-900 text-base">
             정답: {{ correct_answer }}
           </div>
-          <div class="text-sm text-gray-700 mt-1">2초 후 정답 노출이 사라집니다. 다시 시도해보세요.</div>
+          <div class="text-base sm:text-sm text-gray-700 mt-1">2초 후 정답 노출이 사라집니다. 다시 시도해보세요.</div>
           <script>
             setTimeout(() => {
               const el = document.getElementById("correct-ans");
