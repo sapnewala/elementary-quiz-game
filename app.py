@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, render_template_string, g, url_for
-import sqlite3, random, os
+import sqlite3, random, os, csv
 
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(__file__), "problems.db")
@@ -26,6 +26,12 @@ ADMIN_TMPL = """
       <button class="md:col-span-3 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">저장하기</button>
     </div>
   </form>
+
+  <div class="mb-4 flex gap-2">
+    <form method="post" action="{{ url_for('admin_load_sample') }}" style="display: inline;" onsubmit="return confirm('샘플 데이터를 불러오시겠습니까? 기존 데이터는 유지됩니다.');">
+      <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">샘플 불러오기</button>
+    </form>
+  </div>
 
   <h2 class="text-xl font-semibold mt-8 mb-3">저장된 문제</h2>
   {% if rows %}
@@ -273,6 +279,40 @@ def admin_delete_all():
     db = get_db()
     db.execute("DELETE FROM problems")
     db.commit()
+    return redirect(url_for("admin"))
+
+@app.route("/admin/load-sample", methods=["POST"])
+def admin_load_sample():
+    init_db()
+    db = get_db()
+    sample_path = os.path.join(os.path.dirname(__file__), "sample.csv")
+    
+    try:
+        with open(sample_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            count = 0
+            for row in reader:
+                stage = row.get('단계', '').strip()
+                question = row.get('문제', '').strip()
+                answer = row.get('정답', '').strip()
+                
+                if stage and question and answer:
+                    try:
+                        stage_num = int(stage)
+                        if 1 <= stage_num <= 6:
+                            db.execute(
+                                "INSERT INTO problems(stage, question, answer) VALUES (?,?,?)",
+                                (stage_num, question, answer)
+                            )
+                            count += 1
+                    except ValueError:
+                        continue
+            db.commit()
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        pass
+    
     return redirect(url_for("admin"))
 
 @app.route("/", methods=["GET", "POST"])
